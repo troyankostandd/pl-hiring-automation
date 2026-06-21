@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-white">
+  <div class="max-w-4xl mx-auto">
+    <a href="<%= recipes_path %>" class="px-6 py-4 inline-block text-blue-600">← Back to results</a>
+
+    <div class="px-6 py-8">
+      <h1 class="text-4xl font-bold mb-4"><%= @recipe.title %></h1>
+
+      <% if @recipe.description.present? %>
+        <p class="text-gray-600 mb-6"><%= @recipe.description %></p>
+      <% end %>
+
+      <div class="flex gap-8 mb-8">
+        <% if @recipe.total_time_minutes.present? %>
+          <div>
+            <span class="text-sm text-gray-600">Total time</span>
+            <p class="font-semibold"><%= @recipe.total_time_minutes %> min</p>
+          </div>
+        <% end %>
+
+        <% if @recipe.yields.present? %>
+          <div>
+            <span class="text-sm text-gray-600">Yield</span>
+            <p class="font-semibold"><%= @recipe.yields %></p>
+          </div>
+        <% end %>
+
+        <% if @recipe.ratings.present? %>
+          <div>
+            <span class="text-sm text-gray-600">Rating</span>
+            <p class="font-semibold">★ <%= @recipe.ratings %></p>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h2 class="text-xl font-semibold mb-4">Ingredients</h2>
+          <ul class="space-y-2">
+            <% @recipe.recipe_ingredients.each do |ri| %>
+              <li class="flex gap-2">
+                <span class="text-gray-500">
+                  <% if ri.quantity.present? %>
+                    <%= ri.quantity %> <%= ri.unit %>
+                  <% end %>
+                </span>
+                <span><%= ri.ingredient.display_name || ri.ingredient.name %></span>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-4">Instructions</h2>
+          <% if @recipe.instructions.present? %>
+            <ol class="list-decimal list-inside space-y-4">
+              <% @recipe.instructions.split("\n\n").each do |instruction| %>
+                <li><%= instruction.strip %></li>
+              <% end %>
+            </ol>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @recipe.source_url.present? %>
+        <div class="mt-8 pt-8 border-t">
+          <p class="text-sm text-gray-600">
+            Source: <a href="<%= @recipe.source_url %>" target="_blank" class="text-blue-600">allrecipes.com ↗</a>
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

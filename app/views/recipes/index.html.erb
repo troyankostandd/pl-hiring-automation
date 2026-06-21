@@ -1,0 +1,46 @@
+<div class="min-h-screen bg-white">
+  <div class="sticky top-0 bg-white border-b px-6 py-4">
+    <div class="flex justify-between items-center max-w-6xl mx-auto">
+      <h1 class="text-2xl font-bold"><a href="<%= root_path %>">Recipe Finder</a></h1>
+      <a href="<%= root_path %>" class="text-blue-600">About</a>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-8">
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">
+        <%= @total_count %> recipes match
+      </h2>
+
+      <div class="space-y-4">
+        <div>
+          <label class="flex items-center">
+            <input type="checkbox" name="only_cookable">
+            <span class="ml-2">Only show recipes I can fully cook</span>
+          </label>
+        </div>
+
+        <div>
+          <label>Max missing ingredients: <%= @max_missing %></label>
+          <input type="range" min="0" max="10" value="<%= @max_missing %>">
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @recipes.each do |recipe| %>
+        <div class="border rounded p-4">
+          <h3 class="font-semibold text-lg mb-2">
+            <a href="<%= recipe_path(recipe.slug) %>" class="text-blue-600">
+              <%= recipe.title %>
+            </a>
+          </h3>
+          <p class="text-sm text-gray-600 mb-4">
+            <%= "#{recipe.total_time_minutes} min" if recipe.total_time_minutes %>
+          </p>
+          <a href="<%= recipe_path(recipe.slug) %>" class="text-blue-600">View recipe</a>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
