@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@source "../../../app/views";
+@source "../../../app/components";
+@source "../../../app/helpers";
+
+@theme {
+  --color-ink: #1a1a1a;
+  --color-paper: #fafaf7;
+  --color-paper-2: #f2f1ec;
+  --color-olive: #5d6b3a;
+  --color-persimmon: #d9542b;
+  --color-smoke: #6b6b66;
+
+  /* Allrecipes-inspired brand palette */
+  --color-brand: #e2231a;
+  --color-brand-dark: #b71c13;
+  --color-cream: #f7f5f0;
+
+  --font-display: Fraunces, Georgia, serif;
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}

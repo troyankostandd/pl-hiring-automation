@@ -1,7 +1,7 @@
 <div class="flex items-center gap-3">
   <div class="flex gap-1" role="img" aria-label="Match: <%= @label %>">
     <% segments.times do |i| %>
-      <div class="<%= i < matched_segments ? 'bg-olive' : 'border border-ink border-opacity-20' %> h-2 flex-1 min-w-3" style="min-width: 8px;"></div>
+      <div class="<%= i < matched_segments ? 'bg-brand' : 'bg-gray-200' %> h-2 flex-1 rounded-full" style="min-width: 8px;"></div>
     <% end %>
   </div>
   <span class="text-sm font-mono text-ink"><%= @label %></span>

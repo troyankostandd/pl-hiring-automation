@@ -11,7 +11,7 @@ class RecipeMatcher
     @pantry_ingredients = pantry_ingredients
     @pantry_ingredient_ids = resolve_ingredient_ids(pantry_ingredients)
     @max_missing = filters[:max_missing]&.to_i || 3
-    @only_cookable = filters[:only_cookable] == "true"
+    @only_cookable = [true, "true"].include?(filters[:only_cookable])
     @exclusions = filters[:exclusions]&.split(",")&.map(&:strip) || []
     @sort_by = filters[:sort_by] || "best_match"
     @page = filters[:page]&.to_i || 1
@@ -41,23 +41,40 @@ class RecipeMatcher
   private
 
   def resolve_ingredient_ids(ingredients)
-    case ingredients
-    when Array
-      ingredients.compact.map(&:to_i)
-    when String
-      ingredients.split(",").compact.map(&:strip).map(&:to_i)
-    else
-      []
-    end
+    tokens =
+      case ingredients
+      when Array then ingredients
+      when String then ingredients.split(",")
+      else []
+      end
+
+    tokens.map { |t| t.to_s.strip }.reject(&:blank?).flat_map { |t| resolve_token(t) }.uniq
+  end
+
+  # A pantry token may be a numeric ingredient id (from autocomplete) or a
+  # free-text ingredient name (from the search box). Resolve both to ids.
+  def resolve_token(token)
+    return [token.to_i] if token.match?(/\A\d+\z/)
+
+    name = token.downcase
+    exact = Ingredient.where("LOWER(name) = ?", name).pluck(:id)
+    return exact if exact.any?
+
+    # Fall back to the most-used ingredient whose name contains the token.
+    Ingredient.where("LOWER(name) LIKE ?", "%#{name}%")
+              .order(usage_count: :desc)
+              .limit(1)
+              .pluck(:id)
   end
 
   def find_potential_recipes
     if @pantry_ingredient_ids.empty?
-      Recipe.all
+      Recipe.includes(recipe_ingredients: :ingredient).all
     else
       Recipe
         .joins(:recipe_ingredients)
         .where("recipe_ingredients.ingredient_id IN (?)", @pantry_ingredient_ids)
+        .includes(recipe_ingredients: :ingredient)
         .distinct
     end
   end

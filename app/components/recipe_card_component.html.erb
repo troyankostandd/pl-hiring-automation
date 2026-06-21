@@ -1,50 +1,48 @@
-<div class="border border-ink border-opacity-10 rounded p-4 bg-paper-2">
-  <div class="mb-4">
+<a href="<%= recipe_path(@recipe.slug, back: @back_to) %>"
+   class="group block bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all">
+  <div class="relative">
     <% if @recipe.image_url.present? %>
-      <img src="<%= @recipe.image_url %>" alt="<%= @recipe.title %>" class="w-full h-40 object-cover rounded" loading="lazy">
+      <img src="<%= @recipe.image_url %>" alt="<%= @recipe.title %>" class="w-full h-44 object-cover" loading="lazy">
     <% else %>
-      <div class="w-full h-40 bg-smoke bg-opacity-20 rounded flex items-center justify-center">
-        <svg class="w-12 h-12 text-ink opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m0 0h6m0-6h-6m0 0H6"></path>
+      <div class="w-full h-44 bg-cream flex items-center justify-center">
+        <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m0 0H6"></path>
         </svg>
       </div>
     <% end %>
+    <% if @score[:is_fully_cookable] %>
+      <span class="absolute top-3 left-3 bg-brand text-white text-xs font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">Ready to cook</span>
+    <% end %>
   </div>
 
-  <h3 class="font-semibold text-lg mb-2">
-    <a href="<%= recipe_path(@recipe.slug) %>" class="text-ink hover:text-olive transition-colors">
+  <div class="p-4">
+    <h3 class="font-bold font-display text-lg text-ink leading-snug mb-2 group-hover:text-brand transition-colors line-clamp-2">
       <%= @recipe.title %>
-    </a>
-  </h3>
+    </h3>
 
-  <div class="flex gap-4 text-sm text-smoke mb-4">
-    <% if @recipe.total_time_minutes.present? %>
-      <span>⏱ <%= @recipe.total_time_minutes %> min</span>
-    <% end %>
-    <% if @recipe.ratings.present? %>
-      <span>★ <%= @recipe.ratings %></span>
-    <% end %>
-  </div>
-
-  <div class="mb-4">
-    <%= render(MatchMeterComponent.new(@score[:matched], @score[:total], label: "#{@score[:matched]}/#{@score[:total]}")) %>
-  </div>
-
-  <% if missing_ingredients.any? %>
-    <div class="mb-4 text-sm">
-      <p class="text-smoke mb-1">Missing:</p>
-      <p class="text-persimmon">
-        <%= missing_ingredients.join(", ") %>
-        <% if has_more_missing? %>
-          , +<%= more_count %> more
-        <% end %>
-      </p>
+    <div class="flex items-center gap-3 text-sm text-smoke mb-3">
+      <% if @recipe.ratings.present? %>
+        <span class="flex items-center gap-1">
+          <span class="text-amber-500"><%= helpers.star_rating(@recipe.ratings) %></span>
+          <span class="font-semibold text-ink"><%= @recipe.ratings %></span>
+        </span>
+      <% end %>
+      <% if @recipe.total_time_minutes.to_i > 0 %>
+        <span class="font-mono">⏱ <%= @recipe.total_time_minutes %> min</span>
+      <% end %>
     </div>
-  <% else %>
-    <div class="mb-4 text-sm text-olive font-semibold">Ready to cook</div>
-  <% end %>
 
-  <a href="<%= recipe_path(@recipe.slug) %>" class="inline-block text-olive font-semibold hover:underline">
-    View recipe →
-  </a>
-</div>
+    <div class="mb-3">
+      <%= render(MatchMeterComponent.new(@score[:matched], @score[:total], label: "#{@score[:matched]}/#{@score[:total]}")) %>
+    </div>
+
+    <% if missing_ingredients.any? %>
+      <p class="text-xs text-smoke">
+        Missing:
+        <span class="text-brand font-medium"><%= missing_ingredients.join(", ") %><% if has_more_missing? %> +<%= more_count %> more<% end %></span>
+      </p>
+    <% else %>
+      <p class="text-xs font-semibold text-green-700">You have everything!</p>
+    <% end %>
+  </div>
+</a>

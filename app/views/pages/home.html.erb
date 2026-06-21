@@ -1,25 +1,54 @@
-<div class="min-h-screen flex flex-col justify-center items-center bg-white px-6">
-  <div class="max-w-2xl w-full">
-    <h1 class="text-6xl font-bold mb-8 text-center">Cook from what you already have.</h1>
+<section class="bg-cream border-b border-gray-200">
+  <div class="max-w-3xl mx-auto px-6 py-20 text-center">
+    <p class="text-xs font-bold tracking-widest uppercase text-brand mb-4">Find your next meal</p>
+    <h1 class="text-5xl md:text-6xl font-black font-display text-ink leading-tight mb-5">
+      Cook from what you already have.
+    </h1>
+    <p class="text-lg text-smoke max-w-xl mx-auto mb-10">
+      Enter the ingredients in your kitchen and we'll rank recipes by how few extra items you need to buy.
+    </p>
 
-    <form action="<%= recipes_path %>" method="get" class="mb-8">
-      <div class="mb-6">
-        <input
-          type="text"
-          name="ingredients"
-          placeholder="Add an ingredient..."
-          class="w-full px-4 py-3 border border-gray-300 rounded"
-          autofocus
-        >
-      </div>
-
-      <button type="submit" class="w-full bg-green-700 text-white py-3 rounded font-semibold">
+    <form action="<%= recipes_path %>" method="get" class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+      <input
+        type="text"
+        name="ingredients"
+        placeholder="e.g. chicken, rice, tomato"
+        class="flex-1 px-5 py-4 rounded-full border border-gray-300 text-ink focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none"
+        autofocus
+      >
+      <button type="submit" class="bg-brand hover:bg-brand-dark text-white font-bold uppercase tracking-wide px-8 py-4 rounded-full transition-colors">
         Find recipes
       </button>
     </form>
 
-    <div class="text-center text-gray-600">
-      <p><%= @recipe_count %> recipes ready</p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-2 text-sm">
+      <span class="text-smoke">Popular:</span>
+      <% %w[chicken pasta egg tomato cheese].each do |item| %>
+        <a href="<%= recipes_path(ingredients: item) %>"
+           class="px-3 py-1 rounded-full border border-gray-300 text-ink hover:border-brand hover:text-brand transition-colors capitalize"><%= item %></a>
+      <% end %>
+    </div>
+
+    <p class="mt-8 text-sm text-smoke font-mono"><%= number_with_delimiter(@recipe_count) %> recipes ready</p>
+  </div>
+</section>
+
+<section class="max-w-5xl mx-auto px-6 py-16">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+    <div>
+      <div class="text-3xl mb-3">🧺</div>
+      <h3 class="font-bold font-display text-lg mb-2">Use your pantry</h3>
+      <p class="text-sm text-smoke">List what you have. Staples like salt, oil, and flour are assumed.</p>
+    </div>
+    <div>
+      <div class="text-3xl mb-3">📊</div>
+      <h3 class="font-bold font-display text-lg mb-2">See the gap</h3>
+      <p class="text-sm text-smoke">Recipes are ranked by how few extra ingredients you'd need to buy.</p>
+    </div>
+    <div>
+      <div class="text-3xl mb-3">🍳</div>
+      <h3 class="font-bold font-display text-lg mb-2">Start cooking</h3>
+      <p class="text-sm text-smoke">Open a recipe to see the full ingredient list and details.</p>
     </div>
   </div>
-</div>
+</section>

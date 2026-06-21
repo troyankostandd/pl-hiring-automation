@@ -1,29 +1,54 @@
-<div class="min-h-screen bg-white px-6 py-12">
-  <div class="max-w-3xl mx-auto">
-    <a href="<%= root_path %>" class="text-blue-600 mb-8 inline-block">← Home</a>
+<div class="bg-cream border-b border-gray-200">
+  <div class="max-w-3xl mx-auto px-6 py-14">
+    <p class="text-xs font-bold tracking-widest uppercase text-brand mb-3">About</p>
+    <h1 class="text-4xl md:text-5xl font-black font-display text-ink leading-tight">How matching works</h1>
+  </div>
+</div>
 
-    <h1 class="text-4xl font-bold mb-8">How matching works</h1>
+<div class="max-w-3xl mx-auto px-6 py-12">
+  <div class="space-y-6 text-ink leading-relaxed">
+    <p>
+      Recipe Finder helps you discover what you can cook with the ingredients you already have.
+    </p>
+    <p>
+      When you enter your ingredients, the app ranks recipes by how many ingredients you're
+      missing. Recipes requiring the fewest additional items appear first.
+    </p>
+    <p>
+      Pantry staples (salt, pepper, oil, butter, sugar, flour) are assumed to always be available
+      and don't count against your match score.
+    </p>
+  </div>
 
-    <div class="space-y-6 text-gray-700">
-      <p>
-        The Recipe Finder helps you discover what you can cook with the ingredients you already have.
-      </p>
-
-      <p>
-        When you enter your ingredients, the app ranks recipes by how many ingredients you're missing.
-        Recipes requiring the fewest additional items appear first.
-      </p>
-
-      <p>
-        Pantry staples (salt, pepper, oil, butter, sugar, flour) are assumed to always be available and don't count against your match percentage.
-      </p>
+  <div class="grid sm:grid-cols-3 gap-4 my-12">
+    <div class="border border-gray-200 rounded-xl p-5">
+      <p class="text-3xl font-black font-display text-brand mb-1">1</p>
+      <p class="font-semibold text-ink mb-1">Enter ingredients</p>
+      <p class="text-sm text-smoke">Type what's in your kitchen, comma separated.</p>
     </div>
-
-    <div class="mt-12 pt-8 border-t">
-      <h2 class="text-lg font-semibold mb-4">Transparency</h2>
-      <p class="text-sm text-gray-600">
-        This application was built with the help of AI tools (Claude) for code generation and assistance.
-      </p>
+    <div class="border border-gray-200 rounded-xl p-5">
+      <p class="text-3xl font-black font-display text-brand mb-1">2</p>
+      <p class="font-semibold text-ink mb-1">We rank recipes</p>
+      <p class="text-sm text-smoke">Fewest missing ingredients first, then best match and time.</p>
     </div>
+    <div class="border border-gray-200 rounded-xl p-5">
+      <p class="text-3xl font-black font-display text-brand mb-1">3</p>
+      <p class="font-semibold text-ink mb-1">Cook</p>
+      <p class="text-sm text-smoke">Open a recipe for the full ingredient list and details.</p>
+    </div>
+  </div>
+
+  <div class="pt-8 border-t border-gray-200">
+    <h2 class="text-lg font-bold font-display text-ink mb-3">Transparency</h2>
+    <p class="text-sm text-smoke">
+      Recipe data originates from Allrecipes. This application was built with the help of AI tools
+      (Claude) for code generation and assistance.
+    </p>
+  </div>
+
+  <div class="mt-10">
+    <a href="<%= root_path %>" class="inline-block bg-brand hover:bg-brand-dark text-white font-bold uppercase tracking-wide px-6 py-3 rounded-full transition-colors">
+      Start cooking →
+    </a>
   </div>
 </div>

@@ -1,88 +1,134 @@
-<div class="min-h-screen bg-paper">
-  <div class="sticky top-0 bg-white border-b border-ink border-opacity-10 px-6 py-4 z-40">
-    <div class="flex justify-between items-center max-w-6xl mx-auto">
-      <h1 class="text-2xl font-bold font-display text-ink">
-        <a href="<%= root_path %>" class="hover:text-olive transition-colors">Recipe Finder</a>
-      </h1>
-      <div class="flex gap-6">
-        <% if @ingredient_ids.any? %>
-          <div class="flex gap-2 items-center">
-            <span class="text-sm text-smoke">Pantry:</span>
-            <div class="flex gap-2 flex-wrap">
-              <% @ingredient_ids.each do |id| %>
-                <span class="bg-olive text-white px-2 py-1 rounded text-sm">
-                  <%= id %>
-                </span>
-              <% end %>
-            </div>
-          </div>
+<div class="max-w-6xl mx-auto px-6 py-10">
+  <div class="mb-8">
+    <h1 class="text-4xl font-black font-display text-ink mb-2">
+      <%= number_with_delimiter(@total_count) %> <%= "recipe".pluralize(@total_count) %> match
+    </h1>
+    <p class="text-smoke">
+      <%= { "best_match" => "Ranked by best fit", "quickest" => "Quickest first", "highest_rated" => "Highest rated first" }[@sort_by] || "Ranked by best fit" %>
+    </p>
+
+    <% if @ingredient_ids.any? %>
+      <div class="flex flex-wrap items-center gap-2 mt-4">
+        <span class="text-sm font-semibold text-smoke uppercase tracking-wide">Your pantry:</span>
+        <% @ingredient_ids.each do |item| %>
+          <span class="bg-brand text-white px-3 py-1 rounded-full text-sm font-medium capitalize"><%= item %></span>
         <% end %>
-        <a href="<%= about_path %>" class="text-olive hover:underline">About</a>
       </div>
-    </div>
+    <% end %>
   </div>
 
-  <div class="max-w-6xl mx-auto px-6 py-12">
-    <div class="mb-12">
-      <h2 class="text-3xl font-bold font-display text-ink mb-2">
-        <%= @total_count %> recipes match
-      </h2>
-      <p class="text-smoke">Ranked by best fit</p>
-    </div>
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
+    <form action="<%= recipes_path %>" method="get" class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+      <input type="hidden" name="ingredients" value="<%= params[:ingredients] %>">
 
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
-      <div class="space-y-6">
-        <div>
-          <label class="text-sm font-semibold text-ink block mb-2">Filters</label>
+      <div class="border border-gray-200 rounded-xl p-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-brand mb-4">Filters</p>
 
-          <label class="flex items-center gap-2 p-3 rounded border border-ink border-opacity-10 hover:bg-paper-2 cursor-pointer">
-            <input type="checkbox" name="only_cookable" value="true" <%= checked_if(@only_cookable) %> class="cursor-pointer">
-            <span class="text-sm text-ink">Only fully cookable</span>
-          </label>
-        </div>
+        <label class="flex items-center gap-2 cursor-pointer mb-5">
+          <input type="checkbox" name="only_cookable" value="true" <%= checked_if(@only_cookable) %> onchange="this.form.submit()" class="h-4 w-4 accent-brand cursor-pointer">
+          <span class="text-sm text-ink">Only fully cookable</span>
+        </label>
 
-        <div>
-          <label class="text-sm font-semibold text-ink block mb-2">Max missing: <%= @max_missing %></label>
-          <input type="range" name="max_missing" min="0" max="10" value="<%= @max_missing %>" class="w-full">
+        <div class="mb-5">
+          <label class="text-sm font-semibold text-ink block mb-2">Max missing: <span class="font-mono text-brand"><%= @max_missing %></span></label>
+          <input type="range" name="max_missing" min="0" max="10" value="<%= @max_missing %>" onchange="this.form.submit()" class="w-full accent-brand">
         </div>
 
         <div>
           <label class="text-sm font-semibold text-ink block mb-2">Sort by</label>
-          <select name="sort_by" class="w-full border border-ink border-opacity-10 rounded p-2 text-sm">
+          <select name="sort_by" onchange="this.form.submit()" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:border-brand outline-none">
             <option value="best_match" <%= selected_if(@sort_by == "best_match") %>>Best match</option>
             <option value="quickest" <%= selected_if(@sort_by == "quickest") %>>Quickest</option>
             <option value="highest_rated" <%= selected_if(@sort_by == "highest_rated") %>>Highest rated</option>
           </select>
         </div>
-      </div>
 
-      <div class="lg:col-span-3">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <noscript>
+          <button type="submit" class="w-full mt-4 bg-brand text-white py-2 rounded-lg text-sm font-semibold">Apply</button>
+        </noscript>
+      </div>
+    </form>
+
+    <div class="lg:col-span-3">
+      <% if @recipes.empty? %>
+        <div class="text-center py-20 border border-gray-200 rounded-xl">
+          <p class="text-2xl font-bold font-display text-ink mb-3">No matches found</p>
+          <p class="text-sm text-smoke mb-6">Try raising the missing-ingredient limit or adding more pantry items.</p>
+          <a href="<%= root_path %>" class="inline-block bg-brand hover:bg-brand-dark text-white font-bold uppercase tracking-wide px-6 py-3 rounded-full transition-colors">
+            Start over
+          </a>
+        </div>
+      <% else %>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           <% @scored_recipes.each do |score| %>
-            <%= render(RecipeCardComponent.new(score[:recipe], score: score)) %>
+            <%= render(RecipeCardComponent.new(score[:recipe], score: score, back_to: request.fullpath)) %>
           <% end %>
         </div>
+      <% end %>
+    </div>
+  </div>
 
-        <% if @recipes.empty? %>
-          <div class="text-center py-12">
-            <p class="text-xl text-smoke mb-4">No matches found.</p>
-            <p class="text-sm text-smoke mb-6">Try removing an exclusion or raising the missing-ingredient limit.</p>
-            <a href="<%= root_path %>" class="inline-block bg-olive text-white px-4 py-2 rounded hover:bg-opacity-90 transition-opacity">
-              Start over
-            </a>
-          </div>
+  <% if @total_count > 0 %>
+    <%
+      nav_btn = "px-3 py-2 rounded-lg text-sm border border-gray-300 text-ink hover:border-brand hover:text-brand transition-colors"
+      nav_off = "px-3 py-2 rounded-lg text-sm border border-gray-200 text-gray-400 opacity-60 cursor-not-allowed"
+    %>
+    <div class="border-t border-gray-200 pt-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <p class="text-sm text-smoke">
+        Showing <span class="font-semibold text-ink"><%= @first_item %>–<%= @last_item %></span>
+        of <span class="font-semibold text-ink"><%= number_with_delimiter(@total_count) %></span> recipes
+      </p>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <% if @page > 1 %>
+          <a href="<%= page_url(page: 1) %>" class="<%= nav_btn %>">« First</a>
+          <a href="<%= page_url(page: @page - 1) %>" class="<%= nav_btn %>">‹ Prev</a>
+        <% else %>
+          <span class="<%= nav_off %>">« First</span>
+          <span class="<%= nav_off %>">‹ Prev</span>
         <% end %>
+
+        <% page_window(@page, @total_pages).each do |p| %>
+          <% if p == :gap %>
+            <span class="px-2 text-smoke">…</span>
+          <% else %>
+            <a href="<%= page_url(page: p) %>"
+               class="px-3 py-2 rounded-lg text-sm <%= p == @page ? 'bg-brand text-white border border-brand' : 'border border-gray-300 text-ink hover:border-brand hover:text-brand transition-colors' %>">
+              <%= p %>
+            </a>
+          <% end %>
+        <% end %>
+
+        <% if @page < @total_pages %>
+          <a href="<%= page_url(page: @page + 1) %>" class="<%= nav_btn %>">Next ›</a>
+          <a href="<%= page_url(page: @total_pages) %>" class="<%= nav_btn %>">Last »</a>
+        <% else %>
+          <span class="<%= nav_off %>">Next ›</span>
+          <span class="<%= nav_off %>">Last »</span>
+        <% end %>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <form action="<%= recipes_path %>" method="get" class="flex items-center gap-2">
+          <%= hidden_query_fields(only: %i[ingredients only_cookable max_missing sort_by]) %>
+          <label class="text-sm text-smoke">Per page</label>
+          <select name="per_page" onchange="this.form.submit()"
+                  class="border border-gray-300 rounded-lg p-1.5 text-sm focus:border-brand outline-none">
+            <% RecipesController::PAGE_SIZES.each do |size| %>
+              <option value="<%= size %>" <%= selected_if(@per_page == size) %>><%= size %></option>
+            <% end %>
+          </select>
+        </form>
+
+        <form action="<%= recipes_path %>" method="get" class="flex items-center gap-2">
+          <%= hidden_query_fields(only: %i[ingredients only_cookable max_missing sort_by per_page]) %>
+          <label class="text-sm text-smoke">Go to</label>
+          <input type="number" name="page" min="1" max="<%= @total_pages %>" value="<%= @page %>"
+                 class="w-16 border border-gray-300 rounded-lg p-1.5 text-sm focus:border-brand outline-none">
+          <span class="text-sm text-smoke">/ <%= @total_pages %></span>
+          <button type="submit" class="px-3 py-1.5 rounded-lg text-sm border border-gray-300 text-ink hover:border-brand hover:text-brand transition-colors">Go</button>
+        </form>
       </div>
     </div>
-
-    <% if @total_pages > 1 %>
-      <div class="flex justify-center gap-2">
-        <% (1..@total_pages).each do |page| %>
-          <a href="<%= recipes_path(params.merge(page: page)) %>" class="px-3 py-2 rounded <%= page == @page ? 'bg-olive text-white' : 'border border-ink border-opacity-20 text-ink' %>">
-            <%= page %>
-          </a>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
+  <% end %>
 </div>

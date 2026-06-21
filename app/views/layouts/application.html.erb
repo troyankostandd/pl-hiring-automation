@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Genuinedev114" %></title>
+    <title><%= content_for(:title) || "Recipe Finder" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Genuinedev114">
+    <meta name="application-name" content="Recipe Finder">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <%= yield :head %>
 
@@ -22,7 +26,30 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="bg-white text-ink font-sans antialiased min-h-screen flex flex-col">
+    <header class="border-b border-gray-200 bg-white sticky top-0 z-50">
+      <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <a href="<%= root_path %>" class="text-2xl font-black font-display tracking-tight text-ink">
+          Recipe<span class="text-brand">Finder</span>
+        </a>
+        <nav class="flex items-center gap-7 text-sm font-semibold uppercase tracking-wide">
+          <a href="<%= root_path %>" class="hover:text-brand transition-colors">Home</a>
+          <a href="<%= recipes_path %>" class="hover:text-brand transition-colors">Browse</a>
+          <a href="<%= about_path %>" class="hover:text-brand transition-colors">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-1">
+      <%= yield %>
+    </main>
+
+    <footer class="border-t border-gray-200 bg-cream mt-16">
+      <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-smoke">
+        <a href="<%= root_path %>" class="text-lg font-black font-display text-ink">Recipe<span class="text-brand">Finder</span></a>
+        <p>Cook from what you already have. Recipe data from Allrecipes.</p>
+        <a href="<%= about_path %>" class="hover:text-brand transition-colors font-semibold">How matching works →</a>
+      </div>
+    </footer>
   </body>
 </html>

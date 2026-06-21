@@ -1,19 +1,27 @@
-<div class="min-h-screen bg-white">
-  <div class="max-w-2xl mx-auto p-6">
-    <a href="<%= recipe_path(@recipe.slug) %>" class="text-blue-600 mb-8 inline-block">← Back</a>
+<div class="max-w-2xl mx-auto px-6 py-10">
+  <a href="<%= recipe_path(@recipe.slug) %>" class="inline-block text-sm text-brand hover:underline mb-6">← Back to recipe</a>
 
-    <h1 class="text-3xl font-bold mb-8"><%= @recipe.title %></h1>
+  <p class="text-xs font-bold tracking-widest uppercase text-brand mb-2">Cook mode</p>
+  <h1 class="text-3xl md:text-4xl font-black font-display text-ink leading-tight mb-8"><%= @recipe.title %></h1>
 
-    <div class="space-y-6">
-      <% if @recipe.instructions.present? %>
-        <ol class="space-y-6 list-decimal list-inside">
-          <% @recipe.instructions.split("\n\n").each_with_index do |instruction, index| %>
-            <li class="text-lg leading-relaxed">
-              <%= instruction.strip %>
-            </li>
-          <% end %>
-        </ol>
+  <h2 class="text-2xl font-bold font-display text-ink mb-4">Directions</h2>
+  <% if @recipe.instructions.present? %>
+    <ol class="space-y-6">
+      <% @recipe.instructions.split("\n\n").each_with_index do |instruction, i| %>
+        <li class="flex gap-4">
+          <span class="font-bold text-brand whitespace-nowrap">Step <%= i + 1 %></span>
+          <p class="text-lg text-ink leading-relaxed"><%= instruction.strip %></p>
+        </li>
       <% end %>
+    </ol>
+  <% else %>
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-5">
+      <p class="text-gray-700">
+        Step-by-step directions aren't included in this dataset.
+        <a href="<%= allrecipes_url(@recipe) %>" target="_blank" rel="noopener" class="text-brand font-semibold hover:underline">
+          View the full recipe on Allrecipes ↗
+        </a>
+      </p>
     </div>
-  </div>
+  <% end %>
 </div>

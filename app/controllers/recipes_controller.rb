@@ -1,26 +1,32 @@
 class RecipesController < ApplicationController
   before_action :set_recipe, only: [:show, :cook]
 
+  PAGE_SIZES = [10, 25, 50, 100].freeze
+
   def index
     @ingredient_ids = params[:ingredients]&.split(",")&.map(&:strip) || []
     @max_missing = params[:max_missing]&.to_i || 3
     @only_cookable = params[:only_cookable] == "true"
     @sort_by = params[:sort_by] || "best_match"
-    @page = params[:page]&.to_i || 1
+    @per_page = PAGE_SIZES.include?(params[:per_page]&.to_i) ? params[:per_page].to_i : 25
+    @page = [params[:page].to_i, 1].max
 
     result = RecipeMatcher.call(@ingredient_ids, {
       max_missing: @max_missing,
       only_cookable: @only_cookable,
       sort_by: @sort_by,
       page: @page,
-      per_page: 25
+      per_page: @per_page
     })
 
     @total_count = result[:total_count]
     @recipes = result[:results].map { |r| r[:recipe] }
     @scored_recipes = result[:results]
     @pantry_count = result[:pantry_count]
-    @total_pages = (@total_count.to_f / 25).ceil
+    @total_pages = [(@total_count.to_f / @per_page).ceil, 1].max
+    @page = [@page, @total_pages].min
+    @first_item = @total_count.zero? ? 0 : (@page - 1) * @per_page + 1
+    @last_item = [@page * @per_page, @total_count].min
   end
 
   def show
