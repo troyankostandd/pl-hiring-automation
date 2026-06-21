@@ -1,0 +1,20 @@
+pantry_staples:
+  - salt
+  - black pepper
+  - pepper
+  - water
+  - oil
+  - olive oil
+  - butter
+  - sugar
+  - all-purpose flour
+  - flour
+
+max_missing_default: 3
+
+match_ratio_minimum: 0.2
+
+tiebreaker_priority:
+  - missing
+  - match_ratio
+  - total_time

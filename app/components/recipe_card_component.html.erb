@@ -1,0 +1,50 @@
+<div class="border border-ink border-opacity-10 rounded p-4 bg-paper-2">
+  <div class="mb-4">
+    <% if @recipe.image_url.present? %>
+      <img src="<%= @recipe.image_url %>" alt="<%= @recipe.title %>" class="w-full h-40 object-cover rounded" loading="lazy">
+    <% else %>
+      <div class="w-full h-40 bg-smoke bg-opacity-20 rounded flex items-center justify-center">
+        <svg class="w-12 h-12 text-ink opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m0 0h6m0-6h-6m0 0H6"></path>
+        </svg>
+      </div>
+    <% end %>
+  </div>
+
+  <h3 class="font-semibold text-lg mb-2">
+    <a href="<%= recipe_path(@recipe.slug) %>" class="text-ink hover:text-olive transition-colors">
+      <%= @recipe.title %>
+    </a>
+  </h3>
+
+  <div class="flex gap-4 text-sm text-smoke mb-4">
+    <% if @recipe.total_time_minutes.present? %>
+      <span>⏱ <%= @recipe.total_time_minutes %> min</span>
+    <% end %>
+    <% if @recipe.ratings.present? %>
+      <span>★ <%= @recipe.ratings %></span>
+    <% end %>
+  </div>
+
+  <div class="mb-4">
+    <%= render(MatchMeterComponent.new(@score[:matched], @score[:total], label: "#{@score[:matched]}/#{@score[:total]}")) %>
+  </div>
+
+  <% if missing_ingredients.any? %>
+    <div class="mb-4 text-sm">
+      <p class="text-smoke mb-1">Missing:</p>
+      <p class="text-persimmon">
+        <%= missing_ingredients.join(", ") %>
+        <% if has_more_missing? %>
+          , +<%= more_count %> more
+        <% end %>
+      </p>
+    </div>
+  <% else %>
+    <div class="mb-4 text-sm text-olive font-semibold">Ready to cook</div>
+  <% end %>
+
+  <a href="<%= recipe_path(@recipe.slug) %>" class="inline-block text-olive font-semibold hover:underline">
+    View recipe →
+  </a>
+</div>
