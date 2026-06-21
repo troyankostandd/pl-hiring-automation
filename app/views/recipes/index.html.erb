@@ -1,46 +1,88 @@
-<div class="min-h-screen bg-white">
-  <div class="sticky top-0 bg-white border-b px-6 py-4">
+<div class="min-h-screen bg-paper">
+  <div class="sticky top-0 bg-white border-b border-ink border-opacity-10 px-6 py-4 z-40">
     <div class="flex justify-between items-center max-w-6xl mx-auto">
-      <h1 class="text-2xl font-bold"><a href="<%= root_path %>">Recipe Finder</a></h1>
-      <a href="<%= root_path %>" class="text-blue-600">About</a>
+      <h1 class="text-2xl font-bold font-display text-ink">
+        <a href="<%= root_path %>" class="hover:text-olive transition-colors">Recipe Finder</a>
+      </h1>
+      <div class="flex gap-6">
+        <% if @ingredient_ids.any? %>
+          <div class="flex gap-2 items-center">
+            <span class="text-sm text-smoke">Pantry:</span>
+            <div class="flex gap-2 flex-wrap">
+              <% @ingredient_ids.each do |id| %>
+                <span class="bg-olive text-white px-2 py-1 rounded text-sm">
+                  <%= id %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+        <a href="<%= about_path %>" class="text-olive hover:underline">About</a>
+      </div>
     </div>
   </div>
 
-  <div class="max-w-6xl mx-auto px-6 py-8">
-    <div class="mb-8">
-      <h2 class="text-xl font-semibold mb-4">
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <div class="mb-12">
+      <h2 class="text-3xl font-bold font-display text-ink mb-2">
         <%= @total_count %> recipes match
       </h2>
+      <p class="text-smoke">Ranked by best fit</p>
+    </div>
 
-      <div class="space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
+      <div class="space-y-6">
         <div>
-          <label class="flex items-center">
-            <input type="checkbox" name="only_cookable">
-            <span class="ml-2">Only show recipes I can fully cook</span>
+          <label class="text-sm font-semibold text-ink block mb-2">Filters</label>
+
+          <label class="flex items-center gap-2 p-3 rounded border border-ink border-opacity-10 hover:bg-paper-2 cursor-pointer">
+            <input type="checkbox" name="only_cookable" value="true" <%= checked_if(@only_cookable) %> class="cursor-pointer">
+            <span class="text-sm text-ink">Only fully cookable</span>
           </label>
         </div>
 
         <div>
-          <label>Max missing ingredients: <%= @max_missing %></label>
-          <input type="range" min="0" max="10" value="<%= @max_missing %>">
+          <label class="text-sm font-semibold text-ink block mb-2">Max missing: <%= @max_missing %></label>
+          <input type="range" name="max_missing" min="0" max="10" value="<%= @max_missing %>" class="w-full">
         </div>
+
+        <div>
+          <label class="text-sm font-semibold text-ink block mb-2">Sort by</label>
+          <select name="sort_by" class="w-full border border-ink border-opacity-10 rounded p-2 text-sm">
+            <option value="best_match" <%= selected_if(@sort_by == "best_match") %>>Best match</option>
+            <option value="quickest" <%= selected_if(@sort_by == "quickest") %>>Quickest</option>
+            <option value="highest_rated" <%= selected_if(@sort_by == "highest_rated") %>>Highest rated</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="lg:col-span-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <% @scored_recipes.each do |score| %>
+            <%= render(RecipeCardComponent.new(score[:recipe], score: score)) %>
+          <% end %>
+        </div>
+
+        <% if @recipes.empty? %>
+          <div class="text-center py-12">
+            <p class="text-xl text-smoke mb-4">No matches found.</p>
+            <p class="text-sm text-smoke mb-6">Try removing an exclusion or raising the missing-ingredient limit.</p>
+            <a href="<%= root_path %>" class="inline-block bg-olive text-white px-4 py-2 rounded hover:bg-opacity-90 transition-opacity">
+              Start over
+            </a>
+          </div>
+        <% end %>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <% @recipes.each do |recipe| %>
-        <div class="border rounded p-4">
-          <h3 class="font-semibold text-lg mb-2">
-            <a href="<%= recipe_path(recipe.slug) %>" class="text-blue-600">
-              <%= recipe.title %>
-            </a>
-          </h3>
-          <p class="text-sm text-gray-600 mb-4">
-            <%= "#{recipe.total_time_minutes} min" if recipe.total_time_minutes %>
-          </p>
-          <a href="<%= recipe_path(recipe.slug) %>" class="text-blue-600">View recipe</a>
-        </div>
-      <% end %>
-    </div>
+    <% if @total_pages > 1 %>
+      <div class="flex justify-center gap-2">
+        <% (1..@total_pages).each do |page| %>
+          <a href="<%= recipes_path(params.merge(page: page)) %>" class="px-3 py-2 rounded <%= page == @page ? 'bg-olive text-white' : 'border border-ink border-opacity-20 text-ink' %>">
+            <%= page %>
+          </a>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>
